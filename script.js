@@ -74,7 +74,6 @@ function drawGrid(numCols, numRows) {
 
         lengthLabel = document.createElement("label")
         lengthLabel.setAttribute("for", "length-dropdown")
-        lengthLabel.innerHTML = `${slider.value} letters`
 
         sliderLabel.appendChild(lengthDropdown)
         sliderLabel.appendChild(lengthLabel)
@@ -82,9 +81,17 @@ function drawGrid(numCols, numRows) {
 
         cell.appendChild(sliderForm)
 
-        slider.addEventListener("input", (event) => {
-          lengthLabel.innerHTML = `${event.target.value} letters`
-        })
+        updateLengthLabel()
+
+        slider.addEventListener("input", updateLengthLabel)
+
+        exportButton = document.createElement("button")
+        exportButton.innerHTML = "copy as url"
+        exportButton.addEventListener("click", (event) => {
+          navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${exportState()}`)
+        }
+        )
+        cell.appendChild(exportButton)
 
         sliderForm.addEventListener("change", updateCells)
         cell.id = "corner"
@@ -92,18 +99,9 @@ function drawGrid(numCols, numRows) {
         let cell = row.appendChild(document.createElement("th"))
         menu = cell.appendChild(ruleSelection.cloneNode("deep"))
         menu.id = `menu_${x}_${y}`
-        //menu.addEventListener("submit", (event) => {return false;})
         dropdown = menu.firstChild
-        dropdown.addEventListener("change", (event) => {
-          selectedRule = rules.find((r) => r.value == event.target.value) || {}
-          formFields = event.target.parentElement.children[1].childNodes
-          for (let f of formFields) {
-            if (!f.name.startsWith(selectedRule.value)) {
-              f.classList.add("hidden")
-            } else {
-              f.classList.remove("hidden")
-            }
-          }
+        dropdown.addEventListener("change", event => {
+          updateMenu(event.target.parentElement.id)
         })
         menu.addEventListener("change", (event) => {
           affectedCells = x ? [[x,1],[x,2],[x,3]] : [[1,y],[2,y],[3,y]]
@@ -167,4 +165,69 @@ function updateCells() {
   }
 }
 
+function updateMenu(menuId) {
+  menu = document.getElementById(menuId)
+  selectedItem = menu.querySelector(".dropdown-menu")
+  selectedRule = rules.find((r) => r.value == selectedItem.value) || {}
+  formFields = menu.children[1].childNodes
+  for (let f of formFields) {
+    if (!f.name.startsWith(selectedRule.value)) {
+      f.classList.add("hidden")
+    } else {
+      f.classList.remove("hidden")
+    }
+  }
+}
+
+function updateLengthLabel() {
+  let slider = document.getElementById("length-slider")
+  let sliderLabel = document.getElementById("slider-form").querySelector("label")
+  sliderLabel.innerHTML = `${slider.value} letters`
+}
+
+function exportState() {
+  let state = {
+    "length-slider" : document.getElementById("length-slider").value,
+    "length-dropdown": document.getElementById("length-dropdown").value
+  }
+  for (pair of [[0,1], [0,2],[0,3],[1,0],[2,0],[3,0]]) {
+    let menuId = `menu_${pair[0]}_${pair[1]}`
+    let menuForm = document.getElementById(menuId)
+    let menuObj = {}
+    menuObj["dropdown-menu"] = menuForm.firstChild.value
+    let additionalFields = {}
+    for (let f of menuForm.querySelector(".additional-fields").children) {
+      if (f.value) {additionalFields[f.name] = f.value}
+    }
+    menuObj["additional-fields"] = additionalFields
+    state[menuId] = menuObj
+  }
+  return btoa(JSON.stringify(state))
+}
+
+function importState(encodedStateObj) {
+  let stateObj = JSON.parse(atob(encodedStateObj))
+  document.getElementById("length-slider").value = stateObj["length-slider"]
+  document.getElementById("length-dropdown").value = stateObj["length-dropdown"]
+  updateLengthLabel()
+
+  for (pair of [[0,1],[0,2],[0,3],[1,0],[2,0],[3,0]]) {
+    let menuId = `menu_${pair[0]}_${pair[1]}`
+    let menuForm = document.getElementById(menuId)
+    menuObj = stateObj[menuId]
+    menuForm.firstChild.value = menuObj["dropdown-menu"]
+    let additionalFields = menuForm.querySelector(".additional-fields").children
+    for (let f in menuObj["additional-fields"]) {
+      additionalFields.namedItem(f).value = menuObj["additional-fields"][f]
+    }
+    updateMenu(menuId)
+  }
+
+  updateCells()
+}
+
 drawGrid(3,3)
+
+if (window.location.hash) {
+  importState(window.location.hash.replace("#",""))
+}

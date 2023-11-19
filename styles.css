@@ -35,6 +35,11 @@ table#grid {
   text-align: left;
 }
 
+#corner button {
+  margin: 5px 5px 0 0;
+  float: left;
+}
+
 td, th {
   padding: 10px;
   width: 20%;
