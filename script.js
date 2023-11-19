@@ -63,42 +63,27 @@ function drawGrid(numCols, numRows) {
         slider.setAttribute("step", 1)
         slider.setAttribute("min", possibleLengths[0])
         slider.setAttribute("max", possibleLengths.slice(-1))
-        slider.value = 6;
+        slider.value = 4;
         sliderForm.appendChild(slider)
 
-        radioboxAtLeast = document.createElement("input")
-        radioboxAtLeast.id = "radio-at-least"
-        radioboxAtLeast.name = "length"
-        radioboxAtLeast.setAttribute("type", "radio")
-        radioboxAtLeast.setAttribute("checked", true)
+        sliderLabel = document.createElement("div")
+        lengthDropdown = document.createElement("select")
+        lengthDropdown.id = "length-dropdown"
+        lengthDropdown.add(new Option("at least", "at-least"))
+        lengthDropdown.add(new Option("exactly", "exactly"))
 
-        radioboxAtLeastLabel = document.createElement("label")
-        radioboxAtLeastLabel.setAttribute("for", "radio-at-least")
+        lengthLabel = document.createElement("label")
+        lengthLabel.setAttribute("for", "length-dropdown")
+        lengthLabel.innerHTML = `${slider.value} letters`
 
-        radioboxExactly = document.createElement("input")
-        radioboxExactly.id = "radio-exactly"
-        radioboxExactly.name = "length"
-        radioboxExactly.setAttribute("type", "radio")
-
-        radioboxExactlyLabel = document.createElement("label")
-        radioboxExactlyLabel.setAttribute("for", "radio-exactly")
-
-        radioboxSelection = document.createElement("div")
-        radioboxSelection.appendChild(radioboxAtLeast)
-        radioboxSelection.appendChild(radioboxAtLeastLabel)
-        radioboxSelection.appendChild(radioboxExactly)
-        radioboxSelection.appendChild(radioboxExactlyLabel)
-
-        sliderForm.append(radioboxSelection)
-
-        radioboxAtLeastLabel.innerHTML = `at least ${slider.value} letters`
-        radioboxExactlyLabel.innerHTML = `exactly ${slider.value} letters`
+        sliderLabel.appendChild(lengthDropdown)
+        sliderLabel.appendChild(lengthLabel)
+        sliderForm.appendChild(sliderLabel)
 
         cell.appendChild(sliderForm)
 
         slider.addEventListener("input", (event) => {
-          radioboxAtLeastLabel.innerHTML = `at least ${event.target.value} letters`
-          radioboxExactlyLabel.innerHTML = `exactly ${event.target.value} letters`
+          lengthLabel.innerHTML = `${event.target.value} letters`
         })
 
         sliderForm.addEventListener("change", (event) =>
@@ -168,7 +153,6 @@ function calculateCell(x, y) {
     let formFields = Array.from(headForm.children[1].childNodes)
     fieldValue = formFields.find((v) => v.name == `${headRule.value}_${f}`).value
     if (fieldValue) {
-      console.log("fieldValue!", fieldValue)
       headRuleFunc = headRuleFunc(fieldValue.trim().toLowerCase())
     } else {
       return
@@ -179,7 +163,6 @@ function calculateCell(x, y) {
     let formFields = Array.from(sideForm.children[1].childNodes)
     fieldValue = formFields.find((v) => v.name == `${sideRule.value}_${f}`).value
     if (fieldValue) {
-      console.log("fieldValue!", fieldValue)
       sideRuleFunc = sideRuleFunc(fieldValue.trim().toLowerCase())
     } else {
       return
@@ -187,7 +170,7 @@ function calculateCell(x, y) {
   }
 
   wordLength = document.getElementById('length-slider').value
-  if (document.getElementById('radio-at-least').checked) {
+  if (document.getElementById('length-dropdown').value == "at-least") {
     lengthWords = words.filter((word) => word.length >= wordLength)
   } else {
     lengthWords = words.filter((word) => word.length == wordLength)

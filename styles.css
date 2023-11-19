@@ -13,6 +13,9 @@ table#grid {
   font-size: .8em;
   font-weight: normal;
   font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 #length-slider {
@@ -20,16 +23,16 @@ table#grid {
 }
 
 #slider-form div {
+  width: 90%;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 5px;
 }
 
-#slider-form label {
-  width: 80%;
+#slider-form select {
+  width: 50%;
   text-align: left;
-  padding: 5px;
-  margin-top: 2px;
 }
 
 td, th {
