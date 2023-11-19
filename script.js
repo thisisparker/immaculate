@@ -42,20 +42,14 @@ function drawGrid(numCols, numRows) {
         let cell = row.appendChild(document.createElement("th"))
         sliderForm = document.createElement("form")
         sliderForm.id = "slider-form"
-        checkbox = document.createElement("input")
-        checkbox.name = "length-slider-check"
-        checkbox.id =   "length-slider-check"
-        checkbox.setAttribute("type", "checkbox")
-        checkbox.setAttribute("checked", true)
-        sliderForm.appendChild(checkbox)
-        checkboxLabel = document.createElement("label")
-        checkboxLabel.setAttribute("for","length-slider-check")
-        sliderForm.appendChild(checkboxLabel)
+
         slider = document.createElement("input")
         slider.setAttribute("type", "range")
         slider.id = "length-slider"
+
         sliderList = document.createElement("datalist")
         sliderList.id = "slider-values"
+
         possibleLengths = [4, 5, 6, 7, 8, 9, 10]
         for (let i=0;i<possibleLengths.length;i++) {
           var option = document.createElement("option")
@@ -64,24 +58,54 @@ function drawGrid(numCols, numRows) {
           sliderList.appendChild(option)
         }
         cell.appendChild(sliderList)
+
         slider.setAttribute("list", "slider-values")
         slider.setAttribute("step", 1)
         slider.setAttribute("min", possibleLengths[0])
         slider.setAttribute("max", possibleLengths.slice(-1))
         slider.value = 6;
-        sliderForm.append(slider)
+        sliderForm.appendChild(slider)
+
+        radioboxAtLeast = document.createElement("input")
+        radioboxAtLeast.id = "radio-at-least"
+        radioboxAtLeast.name = "length"
+        radioboxAtLeast.setAttribute("type", "radio")
+        radioboxAtLeast.setAttribute("checked", true)
+
+        radioboxAtLeastLabel = document.createElement("label")
+        radioboxAtLeastLabel.setAttribute("for", "radio-at-least")
+
+        radioboxExactly = document.createElement("input")
+        radioboxExactly.id = "radio-exactly"
+        radioboxExactly.name = "length"
+        radioboxExactly.setAttribute("type", "radio")
+
+        radioboxExactlyLabel = document.createElement("label")
+        radioboxExactlyLabel.setAttribute("for", "radio-exactly")
+
+        radioboxSelection = document.createElement("div")
+        radioboxSelection.appendChild(radioboxAtLeast)
+        radioboxSelection.appendChild(radioboxAtLeastLabel)
+        radioboxSelection.appendChild(radioboxExactly)
+        radioboxSelection.appendChild(radioboxExactlyLabel)
+
+        sliderForm.append(radioboxSelection)
+
+        radioboxAtLeastLabel.innerHTML = `at least ${slider.value} letters`
+        radioboxExactlyLabel.innerHTML = `exactly ${slider.value} letters`
+
         cell.appendChild(sliderForm)
-        checkboxLabel.innerHTML = `fixed length of ${slider.value}`
+
         slider.addEventListener("input", (event) => {
-          (checkboxLabel.innerHTML = `fixed length of ${event.target.value}`)
+          radioboxAtLeastLabel.innerHTML = `at least ${event.target.value} letters`
+          radioboxExactlyLabel.innerHTML = `exactly ${event.target.value} letters`
         })
+
         sliderForm.addEventListener("change", (event) =>
           {
-            if (checkbox.value) {
-              for (let y of [1,2,3]) {
-                for (let x of [1,2,3]) {
-                  calculateCell(x, y)
-                }
+            for (let y of [1,2,3]) {
+              for (let x of [1,2,3]) {
+                calculateCell(x, y)
               }
             }
           })
@@ -162,11 +186,11 @@ function calculateCell(x, y) {
     }
   }
 
-  if (document.getElementById('length-slider-check').checked) {
-    wordLength = document.getElementById('length-slider').value
-    lengthWords = words.filter((word) => word.length == wordLength)
+  wordLength = document.getElementById('length-slider').value
+  if (document.getElementById('radio-at-least').checked) {
+    lengthWords = words.filter((word) => word.length >= wordLength)
   } else {
-    lengthWords = words.filter((word) => word.length >= 4)
+    lengthWords = words.filter((word) => word.length == wordLength)
   }
 
   filteredList = lengthWords.filter( (word) =>

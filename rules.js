@@ -1,11 +1,5 @@
 const rules = [
   {
-    value: "set-length",
-    label: "fixed length",
-    fields: ["length"],
-    func: len => (w => w.length == len)
-  },
-  {
     value: "regex",
     label: "regex, baby",
     fields: ["regex"],
@@ -74,5 +68,11 @@ const rules = [
     label: "no repeated letters",
     fields: [],
     func: w => (w.length == new Set(w.split('')).size)
+  },
+  {
+    value: "set-length",
+    label: "fixed length",
+    fields: ["length"],
+    func: len => (w => w.length == len)
   }
 ]

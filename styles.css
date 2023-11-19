@@ -5,13 +5,31 @@ table#grid {
 }
 
 #corner {
-  display: flex;
+  width: 100%;
 }
 
 #slider-form {
+  width: 100%;
   font-size: .8em;
   font-weight: normal;
   font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+}
+
+#length-slider {
+  width: 90%;
+}
+
+#slider-form div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+#slider-form label {
+  width: 80%;
+  text-align: left;
+  padding: 5px;
+  margin-top: 2px;
 }
 
 td, th {
