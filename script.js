@@ -16,7 +16,7 @@ additionalFields.classList.add("additional-fields")
 for (let r of rules) {
   dropdownMenu.add(new Option(r.label, r.value))
   for (let f of r.fields) {
-      additionalField = document.createElement("input")
+      let additionalField = document.createElement("input")
       additionalField.setAttribute("type", "text")
       additionalField.setAttribute("name", `${r.value}_${f}`)
       additionalField.classList.add("hidden")
