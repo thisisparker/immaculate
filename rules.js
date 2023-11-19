@@ -58,6 +58,12 @@ const rules = [
     func: letters => (w => [...letters].every((l) => w.includes(l)))
   },
   {
+    value: "letterbank",
+    label: "comes from letterbank",
+    fields: ["letters"],
+    func: letters => (w => [...w].every((l) => letters.includes(l)))
+  },
+  {
     value: "palindrome",
     label: "palindrome",
     fields: [],
