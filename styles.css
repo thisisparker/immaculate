@@ -1,0 +1,66 @@
+body {
+  width: 800px;
+}
+
+table#grid {
+  border-collapse: collapse;
+  max-width: 100vh;
+}
+
+tr {
+}
+
+td, th {
+  padding: 10px;
+  width: 25%;
+}
+
+td {
+  border: 2px solid black;
+}
+
+.form-container {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}
+
+.dropdown-menu {
+  flex-shrink: 3;
+  max-width: 100%;
+  min-width: 60%;
+}
+
+.additional-fields {
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 25%;
+}
+
+.additional-fields input {
+  min-width: 0;
+  width: 50%;
+}
+
+.cell {
+  width: 100%;
+  text-align: right;
+  aspect-ratio: 1/1;
+  font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace; 
+}
+
+.wordcount {
+  height: 25px;
+  width: 100%;
+}
+
+.wordlist {
+  width: 90%;
+  height: 80%;
+  resize: none;
+  border: none;
+}
+
+.hidden {
+  display: none;
+}
