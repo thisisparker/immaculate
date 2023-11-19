@@ -36,6 +36,16 @@ const rules = [
     func: substring => (w => w.includes(substring))
   },
   {
+    value: "only-vowels-are",
+    label: "only vowel(s) are",
+    fields: ["vowels"],
+    func: vowels => ((w) => {
+      let excluded = [...'aeiou'].filter((v) => ![...vowels].includes(v)).join("");
+      let re = new RegExp(`[${excluded}]`);
+      return !re.test(w)
+    })
+  },
+  {
     value: "at-least-2",
     label: "at least 2 of a given letter",
     fields: ["letter"],
