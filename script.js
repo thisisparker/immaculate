@@ -104,7 +104,7 @@ function calculateCell(x, y) {
     fieldValue = formFields.find((v) => v.name == `${headRule.value}_${f}`).value
     if (fieldValue) {
       console.log("fieldValue!", fieldValue)
-      headRuleFunc = headRuleFunc(fieldValue)
+      headRuleFunc = headRuleFunc(fieldValue.trim().toLowerCase())
     } else {
       return
     }
@@ -115,7 +115,7 @@ function calculateCell(x, y) {
     fieldValue = formFields.find((v) => v.name == `${sideRule.value}_${f}`).value
     if (fieldValue) {
       console.log("fieldValue!", fieldValue)
-      sideRuleFunc = sideRuleFunc(fieldValue)
+      sideRuleFunc = sideRuleFunc(fieldValue.trim().toLowerCase())
     } else {
       return
     }
