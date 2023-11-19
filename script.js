@@ -187,22 +187,23 @@ function updateLengthLabel() {
 
 function exportState() {
   let state = {
-    "length-slider" : document.getElementById("length-slider").value,
-    "length-dropdown": document.getElementById("length-dropdown").value
+    "s" : document.getElementById("length-slider").value,
+    "d": (document.getElementById("length-dropdown").value == "at-least") ? 1 : 2
   }
   for (pair of [[0,1], [0,2],[0,3],[1,0],[2,0],[3,0]]) {
     let menuId = `menu_${pair[0]}_${pair[1]}`
     let menuForm = document.getElementById(menuId)
     let menuObj = {}
     let menuValue = menuForm.firstChild.value
-    menuObj["dropdown-menu"] = menuValue
-    let additionalFields = {}
+    menuObj["d"] = menuValue
+    let additionalFields = []
     for (let f of menuForm.querySelector(".additional-fields").children) {
       if (f.name.startsWith(menuValue) && f.value) {
-        additionalFields[f.name] = f.value
+        console.log(f.name)
+        additionalFields.push(f.value)
       }
     }
-    menuObj["addl"] = additionalFields
+    menuObj["a"] = additionalFields
     state[`${pair[0]}_${pair[1]}`] = menuObj
   }
   console.log(JSON.stringify(state))
@@ -211,22 +212,28 @@ function exportState() {
 
 function importState(encodedStateObj) {
   let stateObj = JSON.parse(atob(decodeURIComponent(encodedStateObj)))
-  document.getElementById("length-slider").value = stateObj["length-slider"]
-  document.getElementById("length-dropdown").value = stateObj["length-dropdown"]
+
+  console.log(stateObj)
+  document.getElementById("length-slider").value = stateObj["s"]
+  document.getElementById("length-dropdown").value = (stateObj["d"] == 1) ? "at-least" : "exactly"
   updateLengthLabel()
 
   for (pair of [[0,1],[0,2],[0,3],[1,0],[2,0],[3,0]]) {
     let menuId = `menu_${pair[0]}_${pair[1]}`
     let menuForm = document.getElementById(menuId)
-    menuObj = stateObj[`${pair[0]}_${pair[1]}`]
-    menuForm.firstChild.value = menuObj["dropdown-menu"]
-    let additionalFields = menuForm.querySelector(".additional-fields").children
-    for (let f in menuObj["addl"]) {
-      additionalFields.namedItem(f).value = menuObj["addl"][f]
+    let menuObj = stateObj[`${pair[0]}_${pair[1]}`]
+    let menuValue = menuObj["d"]
+    menuForm.firstChild.value = menuValue
+    console.log(menuValue)
+    let selectedRule = rules.find((v) => v.value == menuValue)
+    if (selectedRule) {
+      let additionalFields = menuForm.querySelector(".additional-fields").children
+      for (let f of selectedRule.fields) {
+        additionalFields.namedItem(`${menuValue}_${f}`).value = menuObj["a"].shift()
+      }
     }
     updateMenu(menuId)
   }
-
   updateCells()
 }
 
