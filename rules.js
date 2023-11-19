@@ -56,5 +56,11 @@ const rules = [
     label: "palindrome",
     fields: [],
     func: w => (w == [...w].reverse().join(''))
+  },
+  {
+    value: "isogram",
+    label: "no repeated letters",
+    fields: [],
+    func: w => (w.length == new Set(w.split('')).size)
   }
 ]
