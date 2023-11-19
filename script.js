@@ -86,14 +86,7 @@ function drawGrid(numCols, numRows) {
           lengthLabel.innerHTML = `${event.target.value} letters`
         })
 
-        sliderForm.addEventListener("change", (event) =>
-          {
-            for (let y of [1,2,3]) {
-              for (let x of [1,2,3]) {
-                calculateCell(x, y)
-              }
-            }
-          })
+        sliderForm.addEventListener("change", updateCells)
         cell.id = "corner"
       } else {
         let cell = row.appendChild(document.createElement("th"))
@@ -113,16 +106,7 @@ function drawGrid(numCols, numRows) {
           }
         })
         menu.addEventListener("change", (event) => {
-          let affectedCells = []
-          if (x>0) {
-            for (let y of Array.from(new Array(numRows), (_, i) => i + 1)){
-              affectedCells.push([x,y])
-            }
-          } else if (y>0) {
-            for (let x of Array.from(new Array(numCols), (_, i) => i + 1)){
-              affectedCells.push([x,y])
-            }
-          }
+          affectedCells = x ? [[x,1],[x,2],[x,3]] : [[1,y],[2,y],[3,y]]
           for (let cell of affectedCells) {
             calculateCell(cell[0], cell[1])
           }
@@ -133,40 +117,30 @@ function drawGrid(numCols, numRows) {
 }
 
 function calculateCell(x, y) { 
-  let headForm = document.getElementById(`menu_${x}_0`);
-  let sideForm = document.getElementById(`menu_0_${y}`);
+  let menuForms = [document.getElementById(`menu_${x}_0`),
+  document.getElementById(`menu_0_${y}`)];
 
-  let headFormValue = headForm.firstChild.value
-  let sideFormValue = sideForm.firstChild.value
+  let ruleFuncs = []
+  for (let f of menuForms) {
+    formValue = f.firstChild.value
+    if (!formValue) {return}
 
-  if (!(headFormValue && sideFormValue)){
-    return
-  }
+    selectedRule = rules.find((r) => r.value == formValue)
 
-  let headRule = rules.find((r) => r.value == headFormValue)
-  let sideRule = rules.find((r) => r.value == sideFormValue)
+    let ruleFunc = selectedRule.func
 
-  let headRuleFunc = headRule.func
-  let sideRuleFunc = sideRule.func
-
-  for (let f of headRule.fields) {
-    let formFields = Array.from(headForm.children[1].childNodes)
-    fieldValue = formFields.find((v) => v.name == `${headRule.value}_${f}`).value
-    if (fieldValue) {
-      headRuleFunc = headRuleFunc(fieldValue.trim().toLowerCase())
-    } else {
-      return
+    for (let field of selectedRule.fields) {
+      let formFields = Array.from(f.children[1].childNodes)
+      fieldValue = formFields.find((v) => {
+        return v.name == `${selectedRule.value}_${field}`
+      }).value
+      if (fieldValue) {
+        ruleFunc = ruleFunc(fieldValue.trim().toLowerCase())
+      } else {
+        return
+      }
     }
-  }
-
-  for (let f of sideRule.fields) {
-    let formFields = Array.from(sideForm.children[1].childNodes)
-    fieldValue = formFields.find((v) => v.name == `${sideRule.value}_${f}`).value
-    if (fieldValue) {
-      sideRuleFunc = sideRuleFunc(fieldValue.trim().toLowerCase())
-    } else {
-      return
-    }
+    ruleFuncs.push(ruleFunc)
   }
 
   wordLength = document.getElementById('length-slider').value
@@ -177,16 +151,20 @@ function calculateCell(x, y) {
   }
 
   filteredList = lengthWords.filter( (word) =>
-    (headRuleFunc(word) &&
-    sideRuleFunc(word)))
+    (ruleFuncs[0](word) &&
+     ruleFuncs[1](word)))
 
   cell = document.getElementById(`cell_${x}_${y}`)
   cell.querySelector(".wordcount").innerHTML = filteredList.length
   cell.querySelector(".wordlist").value = filteredList.join("\n")
 }
 
-function blockSubmit(event) {
-  event.preventDefault()
+function updateCells() {
+  for (let y of [1,2,3]) {
+    for (let x of [1,2,3]) {
+      calculateCell(x, y)
+    }
+  }
 }
 
 drawGrid(3,3)
