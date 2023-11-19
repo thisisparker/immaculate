@@ -18,6 +18,12 @@ const rules = [
     func: letter => (w => w.endsWith(letter))
   },
   {
+    value: "starts-and-ends",
+    label: "starts and ends with letter",
+    fields: ["letter"],
+    func: letter => (w => w.startsWith(letter) && w.endsWith(letter))
+  },
+  {
     value: "substring-anywhere",
     label: "substring anywhere",
     fields: ["substring"],
