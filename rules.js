@@ -52,6 +52,15 @@ const rules = [
     func: letters => (w => [...letters].every((l) => w.includes(l)))
   },
   {
+    value: "has-none-of",
+    label: "has none of",
+    fields: ["letters"],
+    func: letters => (w => {
+      re = new RegExp(`[${letters}]`)
+      return !re.test(w)
+    })
+  },
+  {
     value: "letterbank",
     label: "comes from letterbank",
     fields: ["letters"],
