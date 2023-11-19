@@ -89,5 +89,11 @@ const rules = [
     label: "fixed length",
     fields: ["length"],
     func: len => (w => w.length == len)
+  },
+  {
+    value: "show-all",
+    label: "show all",
+    fields: [],
+    func: w => w
   }
 ]
