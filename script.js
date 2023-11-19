@@ -194,19 +194,23 @@ function exportState() {
     let menuId = `menu_${pair[0]}_${pair[1]}`
     let menuForm = document.getElementById(menuId)
     let menuObj = {}
-    menuObj["dropdown-menu"] = menuForm.firstChild.value
+    let menuValue = menuForm.firstChild.value
+    menuObj["dropdown-menu"] = menuValue
     let additionalFields = {}
     for (let f of menuForm.querySelector(".additional-fields").children) {
-      if (f.value) {additionalFields[f.name] = f.value}
+      if (f.name.startsWith(menuValue) && f.value) {
+        additionalFields[f.name] = f.value
+      }
     }
-    menuObj["additional-fields"] = additionalFields
-    state[menuId] = menuObj
+    menuObj["addl"] = additionalFields
+    state[`${pair[0]}_${pair[1]}`] = menuObj
   }
-  return btoa(JSON.stringify(state))
+  console.log(JSON.stringify(state))
+  return encodeURIComponent(btoa(JSON.stringify(state)))
 }
 
 function importState(encodedStateObj) {
-  let stateObj = JSON.parse(atob(encodedStateObj))
+  let stateObj = JSON.parse(atob(decodeURIComponent(encodedStateObj)))
   document.getElementById("length-slider").value = stateObj["length-slider"]
   document.getElementById("length-dropdown").value = stateObj["length-dropdown"]
   updateLengthLabel()
@@ -214,11 +218,11 @@ function importState(encodedStateObj) {
   for (pair of [[0,1],[0,2],[0,3],[1,0],[2,0],[3,0]]) {
     let menuId = `menu_${pair[0]}_${pair[1]}`
     let menuForm = document.getElementById(menuId)
-    menuObj = stateObj[menuId]
+    menuObj = stateObj[`${pair[0]}_${pair[1]}`]
     menuForm.firstChild.value = menuObj["dropdown-menu"]
     let additionalFields = menuForm.querySelector(".additional-fields").children
-    for (let f in menuObj["additional-fields"]) {
-      additionalFields.namedItem(f).value = menuObj["additional-fields"][f]
+    for (let f in menuObj["addl"]) {
+      additionalFields.namedItem(f).value = menuObj["addl"][f]
     }
     updateMenu(menuId)
   }
