@@ -6,6 +6,12 @@ const rules = [
     func: len => (w => w.length == len)
   },
   {
+    value: "regex",
+    label: "regex, baby",
+    fields: ["regex"],
+    func: regex => (w => new RegExp(regex).test(w))
+  },
+  {
     value: "starts-with",
     label: "starts with letter",
     fields: ["letter"],
