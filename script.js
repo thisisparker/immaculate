@@ -1,3 +1,9 @@
+const urlParams = new URLSearchParams(window.location.search)
+globalLength = urlParams.get('length')
+if (globalLength) {
+  words = words.filter((word) => word.length == globalLength)
+}
+
 const ruleSelection = document.createElement("form")
 ruleSelection.classList.add("form-container")
 const dropdownMenu = ruleSelection.appendChild(document.createElement("select"))

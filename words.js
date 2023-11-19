@@ -1,4 +1,4 @@
-const words = [
+let words = [
   "aardvark",
   "aardvarks",
   "abaci",
