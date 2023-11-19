@@ -41,9 +41,15 @@ const rules = [
   },
   {
     value: "at-least-2",
-    label: "at least 2 of a given letter",
+    label: "at least 2 of",
     fields: ["letter"],
     func: letter => (w => (w.match(new RegExp(letter, "g")) || []).length >= 2)
+  },
+  {
+    value: "at-least-x",
+    label: "at least X of",
+    fields: ["letter", "count"],
+    func: count => letter => (w => (w.match(new RegExp(letter, "g")) || []).length >= count)
   },
   {
     value: "superset",
