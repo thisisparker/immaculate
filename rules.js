@@ -52,6 +52,12 @@ const rules = [
     func: letter => (w => (w.match(new RegExp(letter, "g")) || []).length >= 2)
   },
   {
+    value: "superset",
+    label: "has all of",
+    fields: ["letters"],
+    func: letters => (w => [...letters].every((l) => w.includes(l)))
+  },
+  {
     value: "palindrome",
     label: "palindrome",
     fields: [],
