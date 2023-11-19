@@ -1,8 +1,4 @@
 const urlParams = new URLSearchParams(window.location.search)
-globalLength = urlParams.get('length')
-if (globalLength) {
-  words = words.filter((word) => word.length == globalLength)
-}
 
 const ruleSelection = document.createElement("form")
 ruleSelection.classList.add("form-container")
@@ -44,6 +40,51 @@ function drawGrid(numCols, numRows) {
         cell.appendChild(cell_body)
       } else if (y==0 && x==0) {
         let cell = row.appendChild(document.createElement("th"))
+        sliderForm = document.createElement("form")
+        sliderForm.id = "slider-form"
+        checkbox = document.createElement("input")
+        checkbox.name = "length-slider-check"
+        checkbox.id =   "length-slider-check"
+        checkbox.setAttribute("type", "checkbox")
+        checkbox.setAttribute("checked", true)
+        sliderForm.appendChild(checkbox)
+        checkboxLabel = document.createElement("label")
+        checkboxLabel.setAttribute("for","length-slider-check")
+        sliderForm.appendChild(checkboxLabel)
+        slider = document.createElement("input")
+        slider.setAttribute("type", "range")
+        slider.id = "length-slider"
+        sliderList = document.createElement("datalist")
+        sliderList.id = "slider-values"
+        possibleLengths = [4, 5, 6, 7, 8, 9, 10]
+        for (let i=0;i<possibleLengths.length;i++) {
+          var option = document.createElement("option")
+          option.value = possibleLengths[i]
+          option.label = possibleLengths[i]
+          sliderList.appendChild(option)
+        }
+        cell.appendChild(sliderList)
+        slider.setAttribute("list", "slider-values")
+        slider.setAttribute("step", 1)
+        slider.setAttribute("min", possibleLengths[0])
+        slider.setAttribute("max", possibleLengths.slice(-1))
+        slider.value = 6;
+        sliderForm.append(slider)
+        cell.appendChild(sliderForm)
+        checkboxLabel.innerHTML = `fixed length of ${slider.value}`
+        slider.addEventListener("input", (event) => {
+          (checkboxLabel.innerHTML = `fixed length of ${event.target.value}`)
+        })
+        sliderForm.addEventListener("change", (event) =>
+          {
+            if (checkbox.value) {
+              for (let y of [1,2,3]) {
+                for (let x of [1,2,3]) {
+                  calculateCell(x, y)
+                }
+              }
+            }
+          })
         cell.id = "corner"
       } else {
         let cell = row.appendChild(document.createElement("th"))
@@ -121,7 +162,14 @@ function calculateCell(x, y) {
     }
   }
 
-  filteredList = words.filter( (word) => 
+  if (document.getElementById('length-slider-check').checked) {
+    wordLength = document.getElementById('length-slider').value
+    lengthWords = words.filter((word) => word.length == wordLength)
+  } else {
+    lengthWords = words.filter((word) => word.length >= 4)
+  }
+
+  filteredList = lengthWords.filter( (word) =>
     (headRuleFunc(word) &&
     sideRuleFunc(word)))
 

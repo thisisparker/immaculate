@@ -4,6 +4,16 @@ table#grid {
   table-layout: fixed;
 }
 
+#corner {
+  display: flex;
+}
+
+#slider-form {
+  font-size: .8em;
+  font-weight: normal;
+  font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+}
+
 td, th {
   padding: 10px;
   width: 20%;
