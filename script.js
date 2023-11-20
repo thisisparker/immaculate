@@ -88,7 +88,8 @@ function drawGrid(numCols, numRows) {
         exportButton = document.createElement("button")
         exportButton.innerHTML = "copy as url"
         exportButton.addEventListener("click", (event) => {
-          navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${exportState()}`)
+          let stateBlob = exportState().match(/.{1,80}/g).join("-")
+          navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${stateBlob}`)
         }
         )
         cell.appendChild(exportButton)
@@ -209,7 +210,7 @@ function exportState() {
 }
 
 function importState(encodedStateObj) {
-  let stateObj = JSON.parse(atob(encodedStateObj))
+  let stateObj = JSON.parse(atob(encodedStateObj.replaceAll("-","")))
   document.getElementById("length-slider").value = stateObj["length-slider"]
   document.getElementById("length-dropdown").value = stateObj["length-dropdown"]
   updateLengthLabel()
