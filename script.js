@@ -88,7 +88,8 @@ function drawGrid(numCols, numRows) {
         exportButton = document.createElement("button")
         exportButton.innerHTML = "copy as url"
         exportButton.addEventListener("click", (event) => {
-          navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${exportState()}`)
+          let stateBlob = exportState().match(/.{1,80}/g).join("-")
+          navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${stateBlob}`)
         }
         )
         cell.appendChild(exportButton)
@@ -187,49 +188,46 @@ function updateLengthLabel() {
 
 function exportState() {
   let state = {
-    "s" : document.getElementById("length-slider").value,
-    "d": (document.getElementById("length-dropdown").value == "at-least") ? 1 : 2
+    "length-slider" : document.getElementById("length-slider").value,
+    "length-dropdown": document.getElementById("length-dropdown").value
   }
   for (pair of [[0,1], [0,2],[0,3],[1,0],[2,0],[3,0]]) {
     let menuId = `menu_${pair[0]}_${pair[1]}`
     let menuForm = document.getElementById(menuId)
     let menuObj = {}
     let menuValue = menuForm.firstChild.value
-    menuObj["d"] = menuValue
+    menuObj["dropdown-menu"] = menuValue
     let additionalFields = []
     for (let f of menuForm.querySelector(".additional-fields").children) {
       if (f.name.startsWith(menuValue) && f.value) {
-        console.log(f.name)
         additionalFields.push(f.value)
       }
     }
-    menuObj["a"] = additionalFields
+    menuObj["fields"] = additionalFields
     state[`${pair[0]}_${pair[1]}`] = menuObj
   }
   console.log(JSON.stringify(state))
-  return encodeURIComponent(btoa(JSON.stringify(state)))
+  return btoa(JSON.stringify(state))
 }
 
 function importState(encodedStateObj) {
-  let stateObj = JSON.parse(atob(decodeURIComponent(encodedStateObj)))
-
-  console.log(stateObj)
-  document.getElementById("length-slider").value = stateObj["s"]
-  document.getElementById("length-dropdown").value = (stateObj["d"] == 1) ? "at-least" : "exactly"
+  let stateObj = JSON.parse(atob(encodedStateObj))
+  document.getElementById("length-slider").value = stateObj["length-slider"]
+  document.getElementById("length-dropdown").value = stateObj["length-dropdown"]
   updateLengthLabel()
 
   for (pair of [[0,1],[0,2],[0,3],[1,0],[2,0],[3,0]]) {
     let menuId = `menu_${pair[0]}_${pair[1]}`
     let menuForm = document.getElementById(menuId)
     let menuObj = stateObj[`${pair[0]}_${pair[1]}`]
-    let menuValue = menuObj["d"]
+    let menuValue = menuObj["dropdown-menu"]
     menuForm.firstChild.value = menuValue
     console.log(menuValue)
     let selectedRule = rules.find((v) => v.value == menuValue)
     if (selectedRule) {
       let additionalFields = menuForm.querySelector(".additional-fields").children
       for (let f of selectedRule.fields) {
-        additionalFields.namedItem(`${menuValue}_${f}`).value = menuObj["a"].shift()
+        additionalFields.namedItem(`${menuValue}_${f}`).value = menuObj["fields"].shift()
       }
     }
     updateMenu(menuId)
@@ -240,5 +238,5 @@ function importState(encodedStateObj) {
 drawGrid(3,3)
 
 if (window.location.hash) {
-  importState(window.location.hash.replace("#",""))
+  importState(window.location.hash.replace("#","").replaceAll("-",""))
 }
