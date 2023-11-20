@@ -194,10 +194,13 @@ function exportState() {
     let menuId = `menu_${pair[0]}_${pair[1]}`
     let menuForm = document.getElementById(menuId)
     let menuObj = {}
-    menuObj["dropdown-menu"] = menuForm.firstChild.value
+    let menuValue = menuForm.firstChild.value
+    menuObj["dropdown-menu"] = menuValue
     let additionalFields = {}
     for (let f of menuForm.querySelector(".additional-fields").children) {
-      if (f.value) {additionalFields[f.name] = f.value}
+      if (f.name.startsWith(menuValue) && f.value) {
+        additionalFields[f.name] = f.value
+      }
     }
     menuObj["additional-fields"] = additionalFields
     state[menuId] = menuObj
