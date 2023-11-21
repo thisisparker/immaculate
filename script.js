@@ -210,7 +210,7 @@ function exportState() {
     menuObj["dropdown-menu"] = menuValue
     let additionalFields = []
     for (let f of menuForm.querySelector(".additional-fields").children) {
-      if (f.name.startsWith(menuValue) && f.value) {
+      if (menuValue && f.name.startsWith(menuValue)) {
         additionalFields.push(f.value)
       }
     }
