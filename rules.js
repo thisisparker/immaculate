@@ -7,19 +7,19 @@ const rules = [
   },
   {
     value: "starts-with",
-    label: "starts with letter",
+    label: "starts with",
     fields: ["letter"],
     func: letter => (w => w.startsWith(letter))
   },
   {
     value: "ends-with",
-    label: "ends with letter",
+    label: "ends with",
     fields: ["letter"],
     func: letter => (w => w.endsWith(letter))
   },
   {
     value: "starts-and-ends",
-    label: "starts and ends with letter",
+    label: "starts and ends with",
     fields: ["letter"],
     func: letter => (w => w.startsWith(letter) && w.endsWith(letter))
   },
@@ -73,6 +73,12 @@ const rules = [
     func: letters => (w => [...w].every((l) => letters.includes(l)))
   },
   {
+    value: "spelling-bee",
+    label: "spelling bee",
+    fields: ["letters"],
+    func: letters => (w => w.includes(letters[0]) && [...w].every((l) => letters.includes(l)))
+  },
+  {
     value: "palindrome",
     label: "palindrome",
     fields: [],
@@ -83,6 +89,12 @@ const rules = [
     label: "no repeated letters",
     fields: [],
     func: w => (w.length == new Set(w.split('')).size)
+  },
+  {
+    value: "at-least-length",
+    label: "at least length",
+    fields: ["length"],
+    func: len => (w => w.length >= len)
   },
   {
     value: "set-length",
