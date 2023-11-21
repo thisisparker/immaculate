@@ -32,7 +32,9 @@ function drawGrid(numCols, numRows) {
         cell.id = `cell_${x}_${y}`
         cell_body = document.createElement("div")
         cell_body.classList.add("cell")
+
         cell_body.appendChild(document.createElement("div")).classList.add("wordcount")
+
         wordlist = document.createElement("textarea")
         wordlist.setAttribute("readonly", true)
         wordlist.classList.add("wordlist")
@@ -85,14 +87,23 @@ function drawGrid(numCols, numRows) {
 
         slider.addEventListener("input", updateLengthLabel)
 
+        exportPanel = document.createElement("div")
+        cell.appendChild(exportPanel)
+        exportPanel.id = "export-panel"
         exportButton = document.createElement("button")
         exportButton.innerHTML = "copy as url"
+        exportPanel.appendChild(exportButton)
+        copyNotif = document.createElement("div")
+        copyNotif.innerHTML = "copied!"
+        exportPanel.appendChild(copyNotif)
+        copyNotif.classList.add("hidden")
         exportButton.addEventListener("click", (event) => {
           let stateBlob = exportState().match(/.{1,80}/g).join("-")
           navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${stateBlob}`)
+          copyNotif.classList.remove("hidden");
+          setTimeout(() => copyNotif.classList.add("hidden"), 1000)
         }
         )
-        cell.appendChild(exportButton)
 
         sliderForm.addEventListener("change", updateCells)
         cell.id = "corner"

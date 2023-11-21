@@ -6,13 +6,13 @@ table#grid {
 
 #corner {
   width: 100%;
+  font-size: .8em;
+  font-weight: normal;
+  font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
 }
 
 #slider-form {
   width: 100%;
-  font-size: .8em;
-  font-weight: normal;
-  font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -38,6 +38,18 @@ table#grid {
 #corner button {
   margin: 5px 5px 0 0;
   float: left;
+}
+
+#export-panel {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+#export-panel div.hidden {
+  opacity: 0;
+  transition: opacity 1s;
 }
 
 td, th {
@@ -93,6 +105,6 @@ td {
   border: none;
 }
 
-.hidden {
+input.hidden {
   display: none;
 }
